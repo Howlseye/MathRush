@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Math Rush</string>
+    <string name="play">Play</string>
+    <string name="about">About</string>
+    <string name="about_text"> -- </string>
+    <string name="language">Language: %1$s</string>
+    <string name="back">Back</string>
     <string name="difficulty">Difficulty</string>
     <string name="difficulty_placeholder">Choose difficulty</string>
     <string name="easy">Easy</string>

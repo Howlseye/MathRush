@@ -1,11 +1,14 @@
 package com.nikola0055.mathrush.ui.screen
 
 import android.content.res.Configuration
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -15,6 +18,7 @@ import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -26,6 +30,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -55,6 +61,8 @@ fun ScreenContent(
     modifier: Modifier = Modifier,
     navController: NavController
 ) {
+    var isPlay by rememberSaveable { mutableStateOf(false) }
+
     var difficultyExpanded by rememberSaveable { mutableStateOf(false) }
     val difficultyOptions = listOf(
         stringResource(id = R.string.easy),
@@ -62,6 +70,7 @@ fun ScreenContent(
         stringResource(id = R.string.hard)
     )
     var difficulty by rememberSaveable { mutableStateOf("")}
+    var difficultyError by rememberSaveable { mutableStateOf(false) }
 
     var timeExpanded by rememberSaveable { mutableStateOf(false) }
     val timeOptions = listOf(
@@ -71,53 +80,158 @@ fun ScreenContent(
         stringResource(id = R.string.minute, 3),
     )
     var time by rememberSaveable { mutableStateOf("") }
+    var timeError by rememberSaveable { mutableStateOf(false) }
 
     Column(
-        modifier = modifier.fillMaxSize().padding(8.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            modifier = Modifier.padding(bottom = 24.dp),
+            modifier = Modifier.scale(1.5f),
+            contentScale = ContentScale.Fit,
             painter = painterResource(id = R.drawable.logo),
-            contentDescription = stringResource(id = R.string.app_name)
+            contentDescription = stringResource(id = R.string.app_name),
         )
 
-        CustomDropdown(
-            label = stringResource(id = R.string.difficulty),
-            placeholder = stringResource(id = R.string.difficulty_placeholder),
-            options = difficultyOptions,
-            value = difficulty,
-            expanded = difficultyExpanded,
-            onExpandedChange = { difficultyExpanded = !difficultyExpanded },
-            onValueChange = {
-                difficulty = it
-            }
-        )
+        Spacer(Modifier.height(48.dp))
 
-        CustomDropdown(
-            label = stringResource(id = R.string.time),
-            placeholder = stringResource(id = R.string.time_placeholder),
-            options = timeOptions,
-            value = time,
-            expanded = timeExpanded,
-            onExpandedChange = { timeExpanded = !timeExpanded },
-            onValueChange = {
-                time = it
-            }
-        )
-
-        Button(
-            onClick = { navController.navigate("gameScreen/${difficulty}/${time}") },
-            modifier = Modifier.padding(16.dp).fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(id = R.string.start),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(8.dp)
+        if (isPlay) {
+            PlayDisplay(
+                difficultyOptions = difficultyOptions,
+                difficulty = difficulty,
+                onDifficultyValueChange = { difficulty = it },
+                difficultyError = difficultyError,
+                onDifficultyErrorChange = { difficultyError = !difficultyError },
+                difficultyExpanded = difficultyExpanded,
+                onDifficultyExpandedChange = { difficultyExpanded = !difficultyExpanded },
+                timeOptions = timeOptions,
+                time = time,
+                onTimeValueChange = { time = it },
+                timeError = timeError,
+                onTimeErrorChange = { timeError = !timeError },
+                timeExpanded = timeExpanded,
+                onTimeExpandedChange = { timeExpanded = !timeExpanded },
+                onPlayClicked = {
+                    isPlay = false
+                    navController.navigate("gameScreen/$difficulty/$time")
+                },
+                onBackClicked = { isPlay = false }
             )
+        } else {
+            Button(
+                onClick = { isPlay = true},
+                modifier = Modifier.fillMaxWidth(0.85f)
+                    .padding(16.dp),
+            ) {
+                Text(
+                    text = stringResource(id = R.string.play),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            Button(
+                onClick = { },
+                modifier = Modifier.fillMaxWidth(0.85f)
+                    .padding(16.dp),
+            ) {
+                Text(
+                    text = stringResource(id = R.string.about),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            Button(
+                onClick = { },
+                modifier = Modifier.fillMaxWidth(0.85f)
+                    .padding(16.dp),
+            ) {
+                Text(
+                    text = stringResource(id = R.string.language, "EN"),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
         }
+    }
+}
+
+@Composable
+fun PlayDisplay(
+    difficultyOptions: List<String>,
+    difficulty: String,
+    onDifficultyValueChange: (String) -> Unit,
+    difficultyError: Boolean,
+    onDifficultyErrorChange: () -> Unit,
+    difficultyExpanded: Boolean,
+    onDifficultyExpandedChange: () -> Unit,
+    timeOptions: List<String>,
+    time: String,
+    onTimeValueChange: (String) -> Unit,
+    timeError: Boolean,
+    onTimeErrorChange: () -> Unit,
+    timeExpanded: Boolean,
+    onTimeExpandedChange: () -> Unit,
+    onPlayClicked: () -> Unit,
+    onBackClicked: () -> Unit
+) {
+    CustomDropdown(
+        label = stringResource(id = R.string.difficulty),
+        placeholder = stringResource(id = R.string.difficulty_placeholder),
+        options = difficultyOptions,
+        value = difficulty,
+        isError = difficultyError,
+        expanded = difficultyExpanded,
+        onExpandedChange = { onDifficultyExpandedChange() },
+        onValueChange = {
+            onDifficultyValueChange(it)
+        }
+    )
+
+    CustomDropdown(
+        label = stringResource(id = R.string.time),
+        placeholder = stringResource(id = R.string.time_placeholder),
+        options = timeOptions,
+        value = time,
+        isError = timeError,
+        expanded = timeExpanded,
+        onExpandedChange = { onTimeExpandedChange() },
+        onValueChange = {
+            onTimeValueChange(it)
+        }
+    )
+
+    Button(
+        onClick = {
+            if (difficulty.isNotEmpty() && time.isNotEmpty()) {
+                onDifficultyErrorChange()
+                onTimeErrorChange()
+                onPlayClicked()
+            } else {
+                onDifficultyErrorChange()
+                onTimeErrorChange()
+            }
+        },
+        modifier = Modifier.fillMaxWidth(0.85f).padding(16.dp, 8.dp),
+    ) {
+        Text(
+            text = stringResource(id = R.string.start),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+    OutlinedButton(
+        onClick = { onBackClicked() },
+        modifier = Modifier.fillMaxWidth(0.85f).padding(16.dp, 0.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+    ) {
+        Text(
+            text = stringResource(id = R.string.back),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+        )
     }
 }
 
@@ -128,6 +242,7 @@ fun CustomDropdown(
     placeholder: String,
     options: List<String>,
     value: String,
+    isError: Boolean,
     expanded: Boolean,
     onExpandedChange: () -> Unit,
     onValueChange: (String) -> Unit,
@@ -149,10 +264,15 @@ fun CustomDropdown(
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = true),
+                    .menuAnchor(
+                        type = ExposedDropdownMenuAnchorType.PrimaryEditable,
+                        enabled = true
+                    ),
                 readOnly = true,
                 value = value,
                 onValueChange = {},
+                isError = isError,
+                supportingText = { if (isError) Text(stringResource(id = R.string.error_text), color = MaterialTheme.colorScheme.error) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 placeholder = { Text(placeholder) },
                 colors = OutlinedTextFieldDefaults.colors(
