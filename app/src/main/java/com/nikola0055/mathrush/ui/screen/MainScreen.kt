@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,15 +31,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.nikola0055.mathrush.R
 import com.nikola0055.mathrush.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    navController: NavController
+) {
     Scaffold { innerPadding ->
         ScreenContent(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
+            navController = navController
         )
     }
 }
@@ -46,26 +52,25 @@ fun MainScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenContent(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
-    var difficultyExpanded by remember { mutableStateOf(false) }
+    var difficultyExpanded by rememberSaveable { mutableStateOf(false) }
     val difficultyOptions = listOf(
         stringResource(id = R.string.easy),
         stringResource(id = R.string.medium),
         stringResource(id = R.string.hard)
     )
-    var difficulty by remember { mutableStateOf("")}
+    var difficulty by rememberSaveable { mutableStateOf("")}
 
-    var timeExpanded by remember { mutableStateOf(false) }
+    var timeExpanded by rememberSaveable { mutableStateOf(false) }
     val timeOptions = listOf(
         stringResource(id = R.string.seconds, 30),
         stringResource(id = R.string.minute, 1),
         stringResource(id = R.string.minute, 2),
         stringResource(id = R.string.minute, 3),
     )
-    var time by remember { mutableStateOf("") }
-
-
+    var time by rememberSaveable { mutableStateOf("") }
 
     Column(
         modifier = modifier.fillMaxSize().padding(8.dp),
@@ -103,7 +108,7 @@ fun ScreenContent(
         )
 
         Button(
-            onClick = {  },
+            onClick = { navController.navigate("gameScreen/${difficulty}/${time}") },
             modifier = Modifier.padding(16.dp).fillMaxWidth()
         ) {
             Text(
@@ -144,7 +149,7 @@ fun CustomDropdown(
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .menuAnchor(),
+                    .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = true),
                 readOnly = true,
                 value = value,
                 onValueChange = {},
@@ -179,6 +184,6 @@ fun CustomDropdown(
 @Composable
 fun MainScreenPreview() {
     AppTheme {
-        MainScreen()
+        MainScreen(rememberNavController())
     }
 }

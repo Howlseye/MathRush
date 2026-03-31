@@ -2,6 +2,15 @@ package com.nikola0055.mathrush.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+//Custom
+val EasyLight = Color(0xFF008545)
+val EasyDark = Color(0xFF24FF89)
+val MediumLight = Color(0xFF916400)
+val MediumDark = Color(0xFFFDCB6E)
+val HardLight = Color(0xFFB30000)
+val HardDark = Color(0xFFFF4D4D)
+
+// Theme
 val primaryLight = Color(0xFF5100C7)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFF6B25F0)
