@@ -10,6 +10,13 @@
     <string name="seconds">%1$d seconds</string>
     <string name="minute">%1$d minutes</string>
     <string name="start">Start</string>
+    <string name="error_text">This field can\'t be empty</string>
     <string name="pause">Pause</string>
+    <string name="home">Home</string>
     <string name="resume">Resume</string>
+    <string name="score">SCORE: %1$d</string>
+    <string name="time_up">TIME\'S UP!</string>
+    <string name="final_score">FINAL SCORE</string>
+    <string name="share">Share</string>
+    <string name="share_template">Math Rush\Difficulty: %1$s\nTime: %2$s\nScore: %3$d</string>
 </resources>
