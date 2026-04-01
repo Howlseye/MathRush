@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.nikola0055.mathrush.ui.screen.AboutScreen
 import com.nikola0055.mathrush.ui.screen.GameScreen
 import com.nikola0055.mathrush.ui.screen.MainScreen
 
@@ -25,6 +26,9 @@ fun SetupNavGraph(
                 difficulty = it.arguments?.getString("difficulty")!!,
                 time = it.arguments?.getString("time")!!
             )
+        }
+        composable(route = Screen.About.route) {
+            AboutScreen(navController)
         }
     }
 }

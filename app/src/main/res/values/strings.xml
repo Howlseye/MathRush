@@ -2,7 +2,6 @@
     <string name="app_name">Math Rush</string>
     <string name="play">Play</string>
     <string name="about">About</string>
-    <string name="about_text"> -- </string>
     <string name="language">Language: %1$s</string>
     <string name="back">Back</string>
     <string name="difficulty">Difficulty</string>
@@ -24,4 +23,10 @@
     <string name="final_score">FINAL SCORE</string>
     <string name="share">Share</string>
     <string name="share_template">Math Rush\Difficulty: %1$s\nTime: %2$s\nScore: %3$d</string>
+    <string name="about_text_bold">Math Rush-All calculations are performed strictly from LEFT to RIGHT.-How To Play-Analyze the Target-Target Number-Fill the Gaps-Beat the Clock-+10 Points</string>
+    <string name="about_text_normal_1">is a arithmetic game designed to sharpen your brain and test your speed. In a world where every second counts, you must build equations on the fly to reach a target goal. To keep the game fast and intuitive, Math Rush ignores standard mathematical order of operations. </string>
+    <string name="about_text_normal_2">is displayed at the top of the screen. This is your goal for the round.</string>
+    <string name="about_text_normal_3">Below the target, you will see an equation with empty boxes and operators (+, -, ×, ÷). Tap a box and type a positive number (1–99) to complete the math.</string>
+    <string name="about_text_normal_4">As soon as the last empty box is filled, the game checks your answer. If it matches the target, you earn</string>
+    <string name="about_text_normal_5">and a new challenge appears instantly. Solve as many as you can before the timer hits zero!</string>
 </resources>
