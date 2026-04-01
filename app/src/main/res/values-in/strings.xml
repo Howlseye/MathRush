@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Math Rush</string>
+    <string name="play">Main</string>
+    <string name="about">Tentang</string>
+    <string name="language">Bahasa: %1$s</string>
+    <string name="back">Kembali</string>
+    <string name="difficulty">Kesulitan</string>
+    <string name="difficulty_placeholder">Pilih tingkat kesulitan</string>
+    <string name="easy">Mudah</string>
+    <string name="medium">Sedang</string>
+    <string name="hard">Sulit</string>
+    <string name="time">Waktu</string>
+    <string name="time_placeholder">Pilih waktu</string>
+    <string name="seconds">%1$d detik</string>
+    <string name="minute">%1$d menit</string>
+    <string name="start">Mulai</string>
+    <string name="error_text">Kolom ini tidak boleh kosong</string>
+    <string name="pause">Jeda</string>
+    <string name="home">Beranda</string>
+    <string name="resume">Lanjutkan</string>
+    <string name="score">SKOR: %1$d</string>
+    <string name="time_up">WAKTU HABIS!</string>
+    <string name="final_score">SKOR AKHIR</string>
+    <string name="share">Bagikan</string>
+    <string name="share_template">Math Rush\nKesulitan: %1$s\nWaktu: %2$s\nSkor: %3$d</string>
+    <string name="about_text_bold">Math Rush-Semua perhitungan dilakukan dari KIRI ke KANAN.-Cara Bermain-Analisis Target-Angka Target-Isi Bagian Kosong-Lawan Waktu-+10 Poin</string>
+    <string name="about_text_normal_1">adalah permainan aritmatika yang dirancang untuk mengasah otak dan menguji kecepatan Anda. Di dunia di mana setiap detik sangat berharga, Anda harus menyusun persamaan dengan cepat untuk mencapai target. Agar permainan tetap cepat dan intuitif, Math Rush mengabaikan urutan operasi matematika standar.</string>
+    <string name="about_text_normal_2">ditampilkan di bagian atas layar. Ini adalah target Anda untuk ronde tersebut.</string>
+    <string name="about_text_normal_3">Di bawah target, Anda akan melihat persamaan dengan kotak kosong dan operator (+, -, ×, ÷). Ketuk kotak dan ketik angka positif (1–99) untuk menyelesaikan perhitungan.</string>
+    <string name="about_text_normal_4">Segera setelah kotak kosong terakhir terisi, permainan akan memeriksa jawaban Anda. Jika sesuai dengan target, Anda mendapatkan</string>
+    <string name="about_text_normal_5">dan tantangan baru akan muncul seketika. Selesaikan sebanyak mungkin sebelum waktu menunjukkan angka nol!</string>
+</resources>
