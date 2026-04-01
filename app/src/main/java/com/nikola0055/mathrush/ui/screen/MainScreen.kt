@@ -47,7 +47,6 @@ import com.nikola0055.mathrush.R
 import com.nikola0055.mathrush.ui.theme.AppTheme
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     navController: NavController
@@ -110,20 +109,25 @@ fun ScreenContent(
             PlayDisplay(
                 difficultyOptions = difficultyOptions,
                 difficulty = difficulty,
-                onDifficultyValueChange = { difficulty = it },
+                onDifficultyValueChange = {
+                    difficulty = it
+                    difficultyError = false
+                },
                 difficultyError = difficultyError,
                 onDifficultyErrorChange = { difficultyError = !difficultyError },
                 difficultyExpanded = difficultyExpanded,
                 onDifficultyExpandedChange = { difficultyExpanded = !difficultyExpanded },
                 timeOptions = timeOptions,
                 time = time,
-                onTimeValueChange = { time = it },
+                onTimeValueChange = {
+                    time = it
+                    timeError = false
+                },
                 timeError = timeError,
                 onTimeErrorChange = { timeError = !timeError },
                 timeExpanded = timeExpanded,
                 onTimeExpandedChange = { timeExpanded = !timeExpanded },
                 onPlayClicked = {
-                    isPlay = false
                     navController.navigate("gameScreen/$difficulty/$time")
                 },
                 onBackClicked = { isPlay = false }
@@ -156,6 +160,8 @@ fun ScreenContent(
                     val newLanguage = if (language == "en") "id" else "en"
                     changeLanguage(newLanguage.lowercase())
                     language = newLanguage
+                    difficulty = ""
+                    time = ""
                 },
                 modifier = Modifier.fillMaxWidth(0.85f)
                     .padding(16.dp),
@@ -218,8 +224,12 @@ fun PlayDisplay(
     Button(
         onClick = {
             if (difficulty.isNotEmpty() && time.isNotEmpty()) {
-                onDifficultyErrorChange()
-                onTimeErrorChange()
+                if (difficultyError) {
+                    onDifficultyErrorChange()
+                }
+                if (timeError) {
+                    onTimeErrorChange()
+                }
                 onPlayClicked()
             } else {
                 onDifficultyErrorChange()
