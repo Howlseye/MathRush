@@ -129,7 +129,10 @@ fun ScreenContent(
     if (paused && !finished) {
         PauseMenu(
             onResume = { onPauseChanged(false) },
-            onHome = onHomeClicked
+            onHome = {
+                onPauseChanged(false)
+                onHomeClicked()
+            }
         )
     }
 
@@ -138,12 +141,17 @@ fun ScreenContent(
             difficulty = difficulty,
             time = time,
             score = score,
-            onHome = onHomeClicked
+            onHome = {
+                finished = !finished
+                onHomeClicked()
+            }
         )
     }
 
     Column(
-        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
