@@ -16,10 +16,11 @@
     <string name="minute">%1$d menit</string>
     <string name="start">Mulai</string>
     <string name="error_text">Kolom ini tidak boleh kosong</string>
-    <string name="pause">Jeda</string>
+    <string name="pause">Game Dijeda</string>
     <string name="home">Beranda</string>
     <string name="resume">Lanjutkan</string>
     <string name="score">SKOR: %1$d</string>
+    <string name="wrong_answer">Jawaban Salah!</string>
     <string name="time_up">WAKTU HABIS!</string>
     <string name="final_score">SKOR AKHIR</string>
     <string name="share">Bagikan</string>
@@ -30,4 +31,5 @@
     <string name="about_text_normal_3">Di bawah target, Anda akan melihat persamaan dengan kotak kosong dan operator (+, -, ×, ÷). Ketuk kotak dan ketik angka positif (1–99) untuk menyelesaikan perhitungan.</string>
     <string name="about_text_normal_4">Segera setelah kotak kosong terakhir terisi, permainan akan memeriksa jawaban Anda. Jika sesuai dengan target, Anda mendapatkan</string>
     <string name="about_text_normal_5">dan tantangan baru akan muncul seketika. Selesaikan sebanyak mungkin sebelum waktu menunjukkan angka nol!</string>
+    <string name="right_answer">Jawaban Benar: +10 poin</string>
 </resources>

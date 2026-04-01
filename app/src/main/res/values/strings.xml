@@ -15,10 +15,12 @@
     <string name="minute">%1$d minutes</string>
     <string name="start">Start</string>
     <string name="error_text">This field can\'t be empty</string>
-    <string name="pause">Pause</string>
+    <string name="pause">Game Paused</string>
     <string name="home">Home</string>
     <string name="resume">Resume</string>
     <string name="score">SCORE: %1$d</string>
+    <string name="right_answer">Right answer: + 10 points</string>
+    <string name="wrong_answer">Wrong answer!</string>
     <string name="time_up">TIME\'S UP!</string>
     <string name="final_score">FINAL SCORE</string>
     <string name="share">Share</string>

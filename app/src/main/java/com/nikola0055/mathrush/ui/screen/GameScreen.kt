@@ -18,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -113,6 +114,9 @@ fun ScreenContent(
     val numbers = rememberSaveable { mutableStateListOf<Int>().apply { repeat(totalInput) { add(0) } } }
     val operators = rememberSaveable { mutableStateListOf<Char>().apply { repeat(totalInput - 1) { add('+') } } }
 
+    var checkAnswer by rememberSaveable { mutableIntStateOf(0) }
+
+
     LaunchedEffect(Unit) {
         targetAnswer = generateAnswer(totalInput, operators)
     }
@@ -123,6 +127,13 @@ fun ScreenContent(
             timeLeft -= 1
         } else if (timeLeft == 0) {
             finished = true
+        }
+    }
+
+    LaunchedEffect(checkAnswer) {
+        if (checkAnswer != 0) {
+            delay(1000)
+            checkAnswer = 0
         }
     }
 
@@ -189,8 +200,7 @@ fun ScreenContent(
         )
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
@@ -199,13 +209,14 @@ fun ScreenContent(
                 if (i > 0) {
                     Text(
                         text = operators[i - 1].toString(),
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.ExtraBold,
                         modifier = Modifier.padding(horizontal = 4.dp)
                     )
                 }
                 CustomTextField(
                     value = numbers[i],
+                    isTrue = checkAnswer,
                     onValueChange = { input ->
                         if (input.isEmpty()) {
                             numbers[i] = 0
@@ -213,16 +224,35 @@ fun ScreenContent(
                             numbers[i] = input.toInt()
 
                             if (numbers.all { it > 0 }) {
-                                if (checkResult(numbers, operators) == targetAnswer) {
+                                val check = checkResult(numbers, operators) == targetAnswer
+                                if (check) {
                                     score += 10
                                     numbers.indices.forEach { numbers[it] = 0 }
                                     targetAnswer = generateAnswer(totalInput, operators)
+                                    checkAnswer = 2
+                                } else {
+                                    checkAnswer = 1
                                 }
                             }
                         }
                     }
                 )
             }
+        }
+        if (checkAnswer == 1) {
+            Text(
+                text = stringResource(R.string.wrong_answer),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.error
+            )
+        } else if (checkAnswer == 2) {
+            Text(
+                text = stringResource(R.string.right_answer),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = if (isSystemInDarkTheme()) EasyDark else EasyLight
+            )
         }
     }
 }
@@ -256,16 +286,32 @@ fun DifficultyLabel(
 @Composable
 fun CustomTextField(
     value: Int,
+    isTrue: Int,
     onValueChange: (String) -> Unit
 ) {
+    val borderColor = when (isTrue) {
+        1 -> MaterialTheme.colorScheme.error
+        2 -> if (isSystemInDarkTheme()) EasyDark else EasyLight
+        else -> MaterialTheme.colorScheme.primary
+    }
+    val screenWidth = LocalWindowInfo.current.containerSize.width.dp
     OutlinedTextField(
-        modifier = Modifier
-            .size(width = 75.dp, height = 75.dp)
-            .padding(4.dp),
+        modifier = Modifier.padding(4.dp).size(screenWidth / 16),
         value = if (value == 0) "" else value.toString(),
         onValueChange = onValueChange,
-        textStyle = TextStyle(fontSize = 24.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+        textStyle = TextStyle(
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold
+        ),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Next)
+        ,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = borderColor,
+            unfocusedBorderColor = borderColor,
+        ),
         singleLine = true,
         shape = RoundedCornerShape(8.dp)
     )
