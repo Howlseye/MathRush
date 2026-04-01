@@ -1,6 +1,7 @@
 package com.nikola0055.mathrush.ui.screen
 
 import android.content.res.Configuration
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -39,10 +40,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.os.LocaleListCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.nikola0055.mathrush.R
 import com.nikola0055.mathrush.ui.theme.AppTheme
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,6 +66,9 @@ fun ScreenContent(
     modifier: Modifier = Modifier,
     navController: NavController
 ) {
+    val currentAppLocales = AppCompatDelegate.getApplicationLocales()
+    var language = if (currentAppLocales.isEmpty) Locale.getDefault().language else currentAppLocales.toLanguageTags()
+
     var isPlay by rememberSaveable { mutableStateOf(false) }
 
     var difficultyExpanded by rememberSaveable { mutableStateOf(false) }
@@ -146,12 +152,16 @@ fun ScreenContent(
                 )
             }
             Button(
-                onClick = { },
+                onClick = {
+                    val newLanguage = if (language == "en") "id" else "en"
+                    changeLanguage(newLanguage.lowercase())
+                    language = newLanguage
+                },
                 modifier = Modifier.fillMaxWidth(0.85f)
                     .padding(16.dp),
             ) {
                 Text(
-                    text = stringResource(id = R.string.language, "EN"),
+                    text = stringResource(id = R.string.language, language.uppercase()),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                 )
@@ -299,6 +309,11 @@ fun CustomDropdown(
             }
         }
     }
+}
+
+fun changeLanguage(languageCode: String) {
+    val appLocales: LocaleListCompat = LocaleListCompat.forLanguageTags(languageCode)
+    AppCompatDelegate.setApplicationLocales(appLocales)
 }
 
 @Preview(showBackground = true)
