@@ -14,12 +14,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Alarm
+import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -34,12 +38,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.os.LocaleListCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -135,8 +141,7 @@ fun ScreenContent(
         } else {
             Button(
                 onClick = { isPlay = true},
-                modifier = Modifier.fillMaxWidth(0.85f)
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxWidth(0.85f).padding(16.dp),
             ) {
                 Text(
                     text = stringResource(id = R.string.play),
@@ -146,8 +151,7 @@ fun ScreenContent(
             }
             Button(
                 onClick = { navController.navigate("aboutScreen") },
-                modifier = Modifier.fillMaxWidth(0.85f)
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxWidth(0.85f).padding(16.dp),
             ) {
                 Text(
                     text = stringResource(id = R.string.about),
@@ -155,20 +159,21 @@ fun ScreenContent(
                     fontWeight = FontWeight.Bold,
                 )
             }
-            Button(
+
+            OutlinedButton(
                 onClick = {
                     val newLanguage = if (language == "en") "id" else "en"
-                    changeLanguage(newLanguage.lowercase())
+                    changeLanguage(newLanguage)
                     language = newLanguage
                     difficulty = ""
                     time = ""
                 },
-                modifier = Modifier.fillMaxWidth(0.85f)
-                    .padding(16.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                modifier = Modifier.fillMaxWidth(0.85f).padding(16.dp),
             ) {
                 Text(
                     text = stringResource(id = R.string.language, language.uppercase()),
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
                     fontWeight = FontWeight.Bold,
                 )
             }
@@ -202,11 +207,14 @@ fun PlayDisplay(
         value = difficulty,
         isError = difficultyError,
         expanded = difficultyExpanded,
-        onExpandedChange = { onDifficultyExpandedChange() },
+        icon = Icons.Rounded.Bolt,
+        onExpandedChange = onDifficultyExpandedChange,
         onValueChange = {
             onDifficultyValueChange(it)
         }
     )
+
+    Spacer(Modifier.height(8.dp))
 
     CustomDropdown(
         label = stringResource(id = R.string.time),
@@ -215,10 +223,9 @@ fun PlayDisplay(
         value = time,
         isError = timeError,
         expanded = timeExpanded,
-        onExpandedChange = { onTimeExpandedChange() },
-        onValueChange = {
-            onTimeValueChange(it)
-        }
+        icon = Icons.Rounded.Alarm,
+        onExpandedChange = onTimeExpandedChange,
+        onValueChange = { onTimeValueChange(it) }
     )
 
     Button(
@@ -266,11 +273,12 @@ fun CustomDropdown(
     value: String,
     isError: Boolean,
     expanded: Boolean,
+    icon: ImageVector,
     onExpandedChange: () -> Unit,
     onValueChange: (String) -> Unit,
 ) {
     Column(
-        modifier = Modifier.padding(8.dp),
+        modifier = Modifier.padding(horizontal = 8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
@@ -284,8 +292,7 @@ fun CustomDropdown(
             onExpandedChange = { onExpandedChange() }
         ) {
             OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
                     .menuAnchor(
                         type = ExposedDropdownMenuAnchorType.PrimaryEditable,
                         enabled = true
@@ -295,7 +302,13 @@ fun CustomDropdown(
                 onValueChange = {},
                 isError = isError,
                 supportingText = { if (isError) Text(stringResource(id = R.string.error_text), color = MaterialTheme.colorScheme.error) },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = label,
+                    )
+                },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                 placeholder = { Text(placeholder) },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
