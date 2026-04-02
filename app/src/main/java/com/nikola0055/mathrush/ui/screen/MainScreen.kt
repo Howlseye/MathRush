@@ -4,8 +4,10 @@ import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Alarm
 import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -95,6 +99,8 @@ fun ScreenContent(
     var time by rememberSaveable { mutableStateOf("") }
     var timeError by rememberSaveable { mutableStateOf(false) }
 
+    var showResult by rememberSaveable { mutableStateOf(false) }
+
     Column(
         modifier = modifier.fillMaxSize()
             .padding(8.dp)
@@ -133,8 +139,10 @@ fun ScreenContent(
                 onTimeErrorChange = { timeError = !timeError },
                 timeExpanded = timeExpanded,
                 onTimeExpandedChange = { timeExpanded = !timeExpanded },
+                checked = showResult,
+                onCheckedChange = { showResult = !showResult },
                 onPlayClicked = {
-                    navController.navigate("gameScreen/$difficulty/$time")
+                    navController.navigate("gameScreen/$difficulty/$time/$showResult")
                 },
                 onBackClicked = { isPlay = false }
             )
@@ -197,6 +205,8 @@ fun PlayDisplay(
     onTimeErrorChange: () -> Unit,
     timeExpanded: Boolean,
     onTimeExpandedChange: () -> Unit,
+    checked: Boolean,
+    onCheckedChange: () -> Unit,
     onPlayClicked: () -> Unit,
     onBackClicked: () -> Unit
 ) {
@@ -227,6 +237,28 @@ fun PlayDisplay(
         onExpandedChange = onTimeExpandedChange,
         onValueChange = { onTimeValueChange(it) }
     )
+    Row(
+        modifier = Modifier.fillMaxWidth()
+            .clickable { onCheckedChange() }
+            .padding(horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Checkbox(
+            checked = checked,
+            onCheckedChange = {
+                onCheckedChange()
+            },
+            colors = CheckboxDefaults.colors(
+                checkedColor = MaterialTheme.colorScheme.primary,
+                uncheckedColor = MaterialTheme.colorScheme.outline
+            )
+        )
+        Text(
+            text = stringResource(id = R.string.show_calculation_result),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    }
 
     Button(
         onClick = {
@@ -239,8 +271,12 @@ fun PlayDisplay(
                 }
                 onPlayClicked()
             } else {
-                onDifficultyErrorChange()
-                onTimeErrorChange()
+                if (difficulty.isEmpty()) {
+                    onDifficultyErrorChange()
+                }
+                if (time.isEmpty()) {
+                    onTimeErrorChange()
+                }
             }
         },
         modifier = Modifier.fillMaxWidth(0.85f).padding(16.dp, 8.dp),

@@ -16,6 +16,8 @@
     <string name="minute">%1$d menit</string>
     <string name="start">Mulai</string>
     <string name="error_text">Kolom ini tidak boleh kosong</string>
+    <string name="show_calculation_result">Tampilkan hasil perhitungan</string>
+    <string name="result">Hasil: %1$d</string>
     <string name="pause">Game Dijeda</string>
     <string name="home">Beranda</string>
     <string name="resume">Lanjutkan</string>

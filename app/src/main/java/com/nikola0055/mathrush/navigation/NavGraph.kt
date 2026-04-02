@@ -24,7 +24,8 @@ fun SetupNavGraph(
             GameScreen(
                 navController = navController,
                 difficulty = it.arguments?.getString("difficulty")!!,
-                time = it.arguments?.getString("time")!!
+                time = it.arguments?.getString("time")!!,
+                showResult = it.arguments?.getString("showResult").toBoolean()
             )
         }
         composable(route = Screen.About.route) {
