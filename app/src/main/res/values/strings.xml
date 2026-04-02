@@ -15,6 +15,8 @@
     <string name="minute">%1$d minutes</string>
     <string name="start">Start</string>
     <string name="error_text">This field can\'t be empty</string>
+    <string name="show_calculation_result">Show calculation results</string>
+    <string name="result">Results: %1$d</string>
     <string name="pause">Game Paused</string>
     <string name="home">Home</string>
     <string name="resume">Resume</string>

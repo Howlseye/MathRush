@@ -52,7 +52,8 @@ import java.io.IOException
 fun GameScreen(
     navController: NavController,
     difficulty: String,
-    time: String
+    time: String,
+    showResult: Boolean
 ) {
     var isPaused by rememberSaveable { mutableStateOf(false) }
 
@@ -87,6 +88,7 @@ fun GameScreen(
             modifier = Modifier.padding(innerPadding),
             difficulty = difficulty,
             time = time,
+            showResult = showResult,
             paused = isPaused,
             onPauseChanged = { isPaused = it },
             onHomeClicked = { navController.popBackStack() }
@@ -99,6 +101,7 @@ fun ScreenContent(
     modifier: Modifier,
     difficulty: String,
     time: String,
+    showResult: Boolean,
     paused: Boolean,
     onPauseChanged: (Boolean) -> Unit,
     onHomeClicked: () -> Unit
@@ -124,6 +127,7 @@ fun ScreenContent(
     val numbers = rememberSaveable { mutableStateListOf<Int>().apply { repeat(totalInput) { add(0) } } }
     val operators = rememberSaveable { mutableStateListOf<Char>().apply { repeat(totalInput - 1) { add('+') } } }
 
+    var calcResult by rememberSaveable { mutableIntStateOf(0) }
     var checkAnswer by rememberSaveable { mutableIntStateOf(0) }
 
 
@@ -144,6 +148,7 @@ fun ScreenContent(
         if (checkAnswer != 0) {
             delay(1000)
             checkAnswer = 0
+            calcResult = 0
         }
     }
 
@@ -229,9 +234,10 @@ fun ScreenContent(
                             numbers[i] = 0
                         } else if (input.length <= 2 && input.all { it.isDigit() }) {
                             numbers[i] = input.toInt()
+                            calcResult = checkResult(numbers, operators)
 
                             if (numbers.all { it > 0 }) {
-                                val check = checkResult(numbers, operators) == targetAnswer
+                                val check = calcResult == targetAnswer
                                 if (check) {
                                     score += 10
                                     numbers.indices.forEach { numbers[it] = 0 }
@@ -246,6 +252,15 @@ fun ScreenContent(
                 )
             }
         }
+
+        if (showResult){
+            Text(
+                text = stringResource(R.string.result, calcResult),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.secondary,
+            )
+        }
+
         if (checkAnswer == 1) {
             Text(
                 text = stringResource(R.string.wrong_answer),
@@ -554,12 +569,15 @@ private fun checkResult(
     for (i in 0 until ops.size) {
         if (i + 1 >= nums.size) break
         val nextNum = nums[i + 1]
-        res = when (ops[i]) {
-            '+' -> res + nextNum
-            '-' -> res - nextNum
-            '×' -> res * nextNum
-            '÷' -> if (nextNum != 0) res / nextNum else res
-            else -> res
+
+        if (nextNum != 0) {
+            res = when (ops[i]) {
+                '+' -> res + nextNum
+                '-' -> res - nextNum
+                '×' -> res * nextNum
+                '÷' -> res / nextNum
+                else -> res
+            }
         }
     }
     return res
@@ -611,7 +629,8 @@ fun GameScreenPreview() {
         GameScreen(
             navController = rememberNavController(),
             difficulty = stringResource(R.string.hard),
-            time = stringResource(R.string.minute, 3)
+            time = stringResource(R.string.minute, 3),
+            showResult = true
         )
     }
 }
