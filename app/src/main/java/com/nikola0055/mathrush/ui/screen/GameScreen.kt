@@ -149,6 +149,7 @@ fun ScreenContent(
             delay(1000)
             calcResult = if (checkAnswer == 2) 0 else calcResult
             checkAnswer = 0
+            calcResult = 0
         }
     }
 
