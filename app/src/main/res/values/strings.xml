@@ -24,7 +24,6 @@
     <string name="time_up">TIME\'S UP!</string>
     <string name="final_score">FINAL SCORE</string>
     <string name="share">Share</string>
-    <string name="share_template">Math Rush\nDifficulty: %1$s\nTime: %2$s\nScore: %3$d</string>
     <string name="about_text_bold">Math Rush-All calculations are performed strictly from LEFT to RIGHT.-How To Play-Analyze the Target-Target Number-Fill the Gaps-Beat the Clock-+10 Points</string>
     <string name="about_text_normal_1">is a arithmetic game designed to sharpen your brain and test your speed. In a world where every second counts, you must build equations on the fly to reach a target goal. To keep the game fast and intuitive, Math Rush ignores standard mathematical order of operations. </string>
     <string name="about_text_normal_2">is displayed at the top of the screen. This is your goal for the round.</string>

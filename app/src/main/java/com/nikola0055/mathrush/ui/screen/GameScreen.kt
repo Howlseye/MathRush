@@ -3,6 +3,7 @@ package com.nikola0055.mathrush.ui.screen
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -17,6 +18,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
@@ -31,11 +36,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.nikola0055.mathrush.R
 import com.nikola0055.mathrush.ui.theme.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -150,7 +160,7 @@ fun ScreenContent(
     if (finished) {
         FinishMenu(
             difficulty = difficulty,
-            time = time,
+            time = seconds,
             score = score,
             onHome = {
                 finished = !finished
@@ -160,14 +170,12 @@ fun ScreenContent(
     }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
+        modifier = modifier.fillMaxSize()
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
+            modifier = Modifier.padding(16.dp)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -194,8 +202,7 @@ fun ScreenContent(
             style = MaterialTheme.typography.displayLarge.copy(fontSize = 90.sp),
             fontWeight = FontWeight.Black,
             textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
                 .padding(vertical = 40.dp)
         )
 
@@ -378,26 +385,23 @@ fun PauseMenu(
 @Composable
 fun FinishMenu(
     difficulty: String,
-    time: String,
+    time: Int,
     score: Int,
     onHome: () -> Unit
 ) {
+    val graphicsLayer = rememberGraphicsLayer()
+    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val message = stringResource(R.string.share_template, difficulty, time, score)
 
     Dialog(onDismissRequest = {}) {
         Surface(
-            modifier = Modifier
-                .fillMaxWidth(0.85f)
-                .wrapContentHeight(),
+            modifier = Modifier.fillMaxWidth(0.85f).wrapContentHeight(),
             shape = RoundedCornerShape(24.dp),
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 8.dp
         ) {
             Column(
-                modifier = Modifier
-                    .padding(24.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.padding(24.dp).fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -424,7 +428,12 @@ fun FinishMenu(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Button(
-                    onClick = { shareData(context, message) },
+                    onClick = {
+                        coroutineScope.launch {
+                            val bitmap = graphicsLayer.toImageBitmap().asAndroidBitmap()
+                            shareBitmap(context, bitmap)
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp)
                 ) {
@@ -444,6 +453,68 @@ fun FinishMenu(
                     )
                 }
             }
+        }
+    }
+
+    Box(
+        modifier = Modifier.alpha(0f)
+            .drawWithContent {
+                graphicsLayer.record {
+                    this@drawWithContent.drawContent()
+                }
+            }
+    ) {
+        Box(modifier = Modifier.wrapContentSize()) {
+            ShareTemplate(difficulty, time, score)
+        }
+    }
+}
+
+@Composable
+fun ShareTemplate(
+    difficulty: String,
+    time: Int,
+    score: Int,
+) {
+    Surface(
+        modifier = Modifier.size(260.dp),
+        shape = RoundedCornerShape(24.dp),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 8.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp).fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Image(
+                modifier = Modifier.padding(bottom = 12.dp),
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = stringResource(id = R.string.app_name)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(16.dp, 0.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                DifficultyLabel(difficulty)
+                Text(
+                    text = formatTime(time),
+                    style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp),
+                    fontWeight = FontWeight.ExtraBold
+                )
+            }
+            Text(
+                text = stringResource(R.string.final_score),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = score.toString(),
+                style = MaterialTheme.typography.displayMedium,
+                fontWeight = FontWeight.Black,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }
@@ -498,13 +569,37 @@ private fun formatTime(seconds: Int): String {
     return "%02d:%02d".format(seconds / 60, seconds % 60)
 }
 
-private fun shareData(context: Context, message: String) {
-    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"
-        putExtra(Intent.EXTRA_TEXT, message)
-    }
-    if (shareIntent.resolveActivity(context.packageManager) != null) {
-        context.startActivity(shareIntent)
+fun shareBitmap(context: Context, bitmap: Bitmap) {
+    try {
+        val cachePath = File(context.cacheDir, "images")
+        cachePath.mkdirs()
+
+        val fileName = "share_score_${System.currentTimeMillis()}.png"
+        val imageFile = File(cachePath, fileName)
+
+        cachePath.listFiles()?.forEach { it.delete() }
+
+        val stream = FileOutputStream(imageFile)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        stream.close()
+
+        val contentUri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            imageFile
+        )
+
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "image/png"
+            putExtra(Intent.EXTRA_STREAM, contentUri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        context.startActivity(Intent.createChooser(intent, "Share Score"))
+
+    } catch (e: IOException) {
+        e.printStackTrace()
     }
 }
 
@@ -517,6 +612,18 @@ fun GameScreenPreview() {
             navController = rememberNavController(),
             difficulty = stringResource(R.string.hard),
             time = stringResource(R.string.minute, 3)
+        )
+    }
+}
+@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun ShareTemplatePreview() {
+    AppTheme {
+        ShareTemplate(
+            difficulty = stringResource(R.string.hard),
+            time = 180,
+            score = 50
         )
     }
 }

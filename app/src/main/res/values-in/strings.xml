@@ -24,7 +24,6 @@
     <string name="time_up">WAKTU HABIS!</string>
     <string name="final_score">SKOR AKHIR</string>
     <string name="share">Bagikan</string>
-    <string name="share_template">Math Rush\nKesulitan: %1$s\nWaktu: %2$s\nSkor: %3$d</string>
     <string name="about_text_bold">Math Rush-Semua perhitungan dilakukan dari KIRI ke KANAN.-Cara Bermain-Analisis Target-Angka Target-Isi Bagian Kosong-Lawan Waktu-+10 Poin</string>
     <string name="about_text_normal_1">adalah permainan aritmatika yang dirancang untuk mengasah otak dan menguji kecepatan Anda. Di dunia di mana setiap detik sangat berharga, Anda harus menyusun persamaan dengan cepat untuk mencapai target. Agar permainan tetap cepat dan intuitif, Math Rush mengabaikan urutan operasi matematika standar.</string>
     <string name="about_text_normal_2">ditampilkan di bagian atas layar. Ini adalah target Anda untuk ronde tersebut.</string>
